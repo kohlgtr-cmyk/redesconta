@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(re)desconecta - Retiros de Yoga</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <i class="fas fa-lotus" style="font-size: 2.5rem; color: var(--primary);"></i>
+            </div>
+        </div>
+        <h1>(re)desconecta</h1>
+        <p>Terapias Integrativas</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <ul>
+            <li><a href="#" data-section="home" class="nav-link active">Início</a></li>
+            <li><a href="#" data-section="retiros" class="nav-link">Retiros</a></li>
+            <li><a href="#" data-section="galeria" class="nav-link">Galeria</a></li>
+            <li><a href="#" data-section="admin" class="nav-link" id="adminLink">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div style="text-align: center; padding: 2rem 0;">
+                <h2 style="color: var(--primary); font-size: 2.5rem; margin-bottom: 1rem;">Bem-vindo ao (re)desconecta</h2>
+                <p style="font-size: 1.2rem; color: #666; max-width: 700px; margin: 0 auto;">
+                    Reconecte-se com você através das terapias integrativas. 
+                    Nossos retiros oferecem um espaço de bem-estar, autocuidado e transformação.
+                </p>
+                <div style="margin-top: 2rem;">
+                    <a href="#" data-section="retiros" class="btn nav-link" style="margin-right: 1rem;">Ver Retiros</a>
+                    <a href="#" data-section="galeria" class="btn btn-secondary nav-link">Galeria de Fotos</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Retiros Section -->
+        <section id="retiros" class="section">
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Nossos Retiros</h2>
+            <div id="retirosGrid" class="retiros-grid">
+                <div class="loading"><i class="fas fa-spinner"></i><p>Carregando retiros...</p></div>
+            </div>
+        </section>
+
+        <!-- Galeria Section -->
+        <section id="galeria" class="section">
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Galeria de Fotos</h2>
+            <div id="galeriaContainer">
+                <div class="loading"><i class="fas fa-spinner"></i><p>Carregando galeria...</p></div>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="admin" class="section">
+            <!-- Login Form -->
+            <div id="loginForm" class="login-container">
+                <h2>Acesso Admin</h2>
+                <div id="loginAlert" class="alert"></div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="adminEmail" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="adminPassword" placeholder="Digite a senha">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="login()">Entrar</button>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <h2 style="color: var(--primary); margin-bottom: 2rem;">Painel Administrativo</h2>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary);">Gerenciar Retiros</h3>
+                    <button class="btn btn-danger" onclick="logout()">Sair</button>
+                </div>
+
+                <div id="adminAlert" class="alert"></div>
+
+                <!-- Add/Edit Retiro Form -->
+                <form id="retiroForm" onsubmit="saveRetiro(event)">
+                    <input type="hidden" id="retiroId">
+                    
+                    <div class="form-group">
+                        <label>Nome do Retiro *</label>
+                        <input type="text" id="retiroNome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Edição (ex: 1ª Edição, Verão 2025) *</label>
+                        <input type="text" id="retiroEdicao" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data e Horário *</label>
+                        <input type="text" id="retiroData" placeholder="Ex: 15-17 de Março, 2025 | 9h às 17h" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Localização *</label>
+                        <input type="text" id="retiroLocal" placeholder="Ex: Serra da Mantiqueira, SP" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Coordenadas do Maps (opcional)</label>
+                        <input type="text" id="retiroCoords" placeholder="Ex: -22.7519, -45.5987 (latitude, longitude)">
+                        <small style="color: #666;">Para obter: abra Google Maps, clique com botão direito no local, copie as coordenadas</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea id="retiroDescricao" placeholder="Descreva o retiro..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Imagem Principal</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="retiroImagemFile" accept="image/*" onchange="previewRetiroImage(this)">
+                            <label for="retiroImagemFile" class="file-input-label">
+                                <i class="fas fa-upload"></i> Escolher Imagem
+                            </label>
+                        </div>
+                        <div id="retiroImagePreview" style="margin-top: 1rem;"></div>
+                        <input type="hidden" id="retiroImagem">
+                    </div>
+
+                    <div class="upload-progress" id="retiroUploadProgress">
+                        <div class="upload-progress-bar" id="retiroProgressBar">0%</div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn" id="saveRetiroBtn">Salvar Retiro</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancelar</button>
+                    </div>
+                </form>
+
+                <!-- Photo Upload Section -->
+                <div class="photo-upload-section">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Adicionar Fotos à Galeria</h3>
+                    
+                    <div class="form-group">
+                        <label>Edição/Nome do Retiro</label>
+                        <input type="text" id="photoEdicao" placeholder="Ex: 1ª Edição - Verão 2025">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Escolher Fotos (múltiplas)</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="photoFiles" accept="image/*" multiple onchange="previewPhotos(this)">
+                            <label for="photoFiles" class="file-input-label">
+                                <i class="fas fa-images"></i> Escolher Fotos
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="photo-preview" id="photoPreview"></div>
+
+                    <div class="upload-progress" id="photoUploadProgress">
+                        <div class="upload-progress-bar" id="photoProgressBar">0%</div>
+                    </div>
+
+                    <button class="btn" onclick="uploadPhotos()" id="uploadPhotosBtn" style="margin-top: 1rem;">
+                        <i class="fas fa-cloud-upload-alt"></i> Fazer Upload das Fotos
+                    </button>
+                </div>
+
+                <!-- Existing Retiros List -->
+                <div class="admin-retiros-list">
+                    <h3 style="color: var(--primary); margin-bottom: 1rem;">Retiros Cadastrados</h3>
+                    <div id="adminRetirosList">
+                        <div class="loading"><i class="fas fa-spinner"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="">
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
