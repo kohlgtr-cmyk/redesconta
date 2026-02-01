@@ -1,14 +1,14 @@
-# 🔥 GUIA DE CONFIGURAÇÃO - (RE)DESCONECTA COM FIREBASE
+# 🔥 GUIA DE CONFIGURAÇÃO - (RE)DESCONECTA COM FIREBASE REALTIME DATABASE
 
 ## 📋 CHECKLIST RÁPIDO
 
 - [ ] Criar conta no Firebase
 - [ ] Criar projeto no Firebase Console
-- [ ] Ativar Firestore Database
+- [ ] Ativar Realtime Database
 - [ ] Ativar Storage
 - [ ] Ativar Authentication (Email/Senha)
 - [ ] Criar usuário admin
-- [ ] Copiar credenciais do Firebase
+- [ ] Copiar credenciais do Firebase (incluindo databaseURL)
 - [ ] Substituir no arquivo HTML
 - [ ] Configurar regras de segurança
 - [ ] Testar o site
@@ -29,39 +29,37 @@
 
 ---
 
-### 2. ATIVAR FIRESTORE DATABASE
+### 2. ATIVAR REALTIME DATABASE
 
-1. No menu lateral esquerdo, clique em **"Firestore Database"**
+1. No menu lateral esquerdo, clique em **"Realtime Database"**
 2. Clique em **"Criar banco de dados"**
-3. Selecione **"Iniciar no modo de produção"**
-4. Escolha a localização: **"southamerica-east1 (São Paulo)"**
+3. Escolha a localização: **"United States (us-central1)"** (é a única opção gratuita)
+4. Selecione **"Iniciar no modo bloqueado"** (vamos configurar as regras depois)
 5. Clique em **"Ativar"**
 
-#### 2.1 CONFIGURAR REGRAS DO FIRESTORE
+#### 2.1 CONFIGURAR REGRAS DO REALTIME DATABASE
 
 1. Após criar, clique na aba **"Regras"**
-2. Apague tudo e cole isso:
+2. Você vai ver um JSON. Apague tudo e cole isso:
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Retiros - qualquer um pode ler, só admin autenticado pode escrever
-    match /retiros/{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    
-    // Fotos - qualquer um pode ler, só admin autenticado pode escrever
-    match /photos/{document=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
+```json
+{
+  "rules": {
+    "retiros": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "photos": {
+      ".read": true,
+      ".write": "auth != null"
     }
   }
 }
 ```
 
 3. Clique em **"Publicar"**
+
+**⚠️ IMPORTANTE:** Copie a URL do banco de dados que aparece no topo (algo como `https://redesconecta-12345-default-rtdb.firebaseio.com`). Você vai precisar dela!
 
 ---
 
@@ -142,18 +140,54 @@ const firebaseConfig = {
   apiKey: "AIzaSyABC123def456GHI789jkl",
   authDomain: "redesconecta-12345.firebaseapp.com",
   projectId: "redesconecta-12345",
+  databaseURL: "https://redesconecta-12345-default-rtdb.firebaseio.com",
   storageBucket: "redesconecta-12345.appspot.com",
   messagingSenderId: "123456789012",
   appId: "1:123456789012:web:abc123def456"
 };
 ```
 
+**⚠️ ATENÇÃO:** A `databaseURL` você copia lá da tela do Realtime Database (é a URL que aparece no topo)!
+
 ---
 
 ### 6. CONFIGURAR O ARQUIVO HTML
 
-1. Abra o arquivo **redesconecta-firebase.html**
+1. Abra o arquivo **redesconecta-realtime.html**
 2. Procure por esta seção (está no começo do JavaScript):
+
+```javascript
+// ========================================
+// CONFIGURAÇÃO DO FIREBASE
+// SUBSTITUA COM SUAS CREDENCIAIS
+// ========================================
+const firebaseConfig = {
+    apiKey: "SUA_API_KEY_AQUI",
+    authDomain: "SEU_PROJECT_ID.firebaseapp.com",
+    projectId: "SEU_PROJECT_ID",
+    databaseURL: "https://SEU_PROJECT_ID-default-rtdb.firebaseio.com",
+    storageBucket: "SEU_PROJECT_ID.appspot.com",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID"
+};
+```
+
+3. **SUBSTITUA** pelos valores que você copiou do Firebase (incluindo a `databaseURL`)
+4. Salve o arquivo
+
+**EXEMPLO DE COMO FICA:**
+
+```javascript
+const firebaseConfig = {
+    apiKey: "AIzaSyABC123def456GHI789jkl",
+    authDomain: "redesconecta-12345.firebaseapp.com",
+    projectId: "redesconecta-12345",
+    databaseURL: "https://redesconecta-12345-default-rtdb.firebaseio.com",
+    storageBucket: "redesconecta-12345.appspot.com",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abc123def456"
+};
+```
 
 ```javascript
 // ========================================
@@ -170,27 +204,11 @@ const firebaseConfig = {
 };
 ```
 
-3. **SUBSTITUA** pelos valores que você copiou do Firebase
-4. Salve o arquivo
-
-**EXEMPLO DE COMO FICA:**
-
-```javascript
-const firebaseConfig = {
-    apiKey: "AIzaSyABC123def456GHI789jkl",
-    authDomain: "redesconecta-12345.firebaseapp.com",
-    projectId: "redesconecta-12345",
-    storageBucket: "redesconecta-12345.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456"
-};
-```
-
 ---
 
 ### 7. TESTAR O SITE
 
-1. Abra o arquivo **redesconecta-firebase.html** no navegador
+1. Abra o arquivo **redesconecta-realtime.html** no navegador
 2. Clique em **"Admin"** no menu
 3. Faça login com o e-mail e senha que você criou
 4. Teste adicionar um retiro
@@ -286,7 +304,7 @@ firebase deploy
 
 O Firebase tem um plano GRATUITO muito generoso:
 
-- **Firestore:** 50.000 leituras/dia GRÁTIS
+- **Realtime Database:** 1GB armazenamento + 10GB download/mês GRÁTIS
 - **Storage:** 5GB GRÁTIS
 - **Authentication:** Ilimitado GRÁTIS
 
@@ -317,3 +335,7 @@ Se tiver dúvidas:
 ---
 
 Boa sorte! 🚀🧘‍♀️
+
+
+
+https://console.firebase.google.com/u/2/project/redesconta-4efcf/database/redesconta-4efcf-default-rtdb/
