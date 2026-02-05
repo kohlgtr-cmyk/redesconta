@@ -5,13 +5,13 @@
         }
 
         :root {
-            --primary: #c8419b;
-            --secondary: #e85db5;
-            --accent: #9b3078;
+            --primary: #7E6BB3;     /* Lavanda suave */
+            --secondary: #C4B7E2;   /* Lilás claro */
+            --accent: #5A4A8C;      /* Roxo relaxante */
             --light: #fef5fb;
             --dark: #2c2c2c;
             --white: #ffffff;
-            --gradient: linear-gradient(135deg, #c8419b, #e85db5);
+            --gradient: linear-gradient(135deg, #7E6BB3, #C4B7E2);
         }
 
         body {
